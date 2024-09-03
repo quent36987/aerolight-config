@@ -1,0 +1,165 @@
+# PostgreSQL Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bdd-aerolight
+  namespace: aerolight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bdd-aerolight
+  template:
+    metadata:
+      labels:
+        app: bdd-aerolight
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12.1-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_DB
+              value: aerolight-bdd
+          volumeMounts:
+            - name: bdd-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: bdd-data
+          persistentVolumeClaim:
+            claimName: bdd-data-pvc
+
+---
+# S3 Mock Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: s3-mock
+  namespace: aerolight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3-mock
+  template:
+    metadata:
+      labels:
+        app: s3-mock
+    spec:
+      containers:
+        - name: s3-mock
+          image: gresau/localstack-persist:3
+          ports:
+            - containerPort: 4566
+          env:
+            - name: DEBUG
+              value: "1"
+          volumeMounts:
+            - name: s3-data
+              mountPath: /persisted-data
+      volumes:
+        - name: s3-data
+          persistentVolumeClaim:
+            claimName: s3-data-pvc
+
+---
+# Docx-to-PDF Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docx-to-pdf
+  namespace: aerolight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docx-to-pdf
+  template:
+    metadata:
+      labels:
+        app: docx-to-pdf
+    spec:
+      containers:
+        - name: docx-to-pdf
+          image: moalhaddar/docx-to-pdf:2.1.0-12
+          ports:
+            - containerPort: 8080
+          env:
+            - name: pool.size
+              value: "1"
+
+---
+# Aerolight Back Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aerolight-back
+  namespace: aerolight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aerolight-back
+  template:
+    metadata:
+      labels:
+        app: aerolight-back
+    spec:
+      containers:
+        - name: aerolight-back
+          image: ghcr.io/quent36987/aerolight-back:latest
+          ports:
+            - containerPort: 9001
+          env:
+            - name: PORT
+              value: "9001"
+            - name: DB_URL
+              value: jdbc:postgresql://bdd-aerolight:5432/aerolight-bdd
+            - name: DB_USER
+              value: admin
+            - name: DB_PASSWORD
+              value: admin
+            - name: JWT_SECRET
+              value: "======================BezKoder=Spring==========================="
+            - name: JWT_EXPIRATION_MS
+              value: "86400000"
+            - name: JWT_COOKIE_NAME
+              value: bezkoder-jwt
+            - name: AWS_CLOUD_ENPOINT
+              value: http://s3-mock-service:4566
+            - name: PDF_URL
+              value: http://docx-to-pdf-service:8080
+            - name: URL_FRONT
+              value: http://aerolight-front-service:8085
+      imagePullSecrets:
+        - name: ghcr-secret
+
+---
+# Aerolight Front Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aerolight-front
+  namespace: aerolight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aerolight-front
+  template:
+    metadata:
+      labels:
+        app: aerolight-front
+    spec:
+      containers:
+        - name: aerolight-front
+          image: ghcr.io/quent36987/aerolight-front:latest
+          ports:
+            - containerPort: 80
+
+---

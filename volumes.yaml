@@ -1,0 +1,28 @@
+# PersistentVolumeClaims for volumes
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bdd-data-pvc
+  namespace: aerolight
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: s3-data-pvc
+  namespace: aerolight
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---

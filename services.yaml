@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bdd-aerolight-service
+  namespace: aerolight
+spec:
+  selector:
+    app: bdd-aerolight
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: s3-mock-service
+  namespace: aerolight
+spec:
+  selector:
+    app: s3-mock
+  ports:
+    - protocol: TCP
+      port: 4566
+      targetPort: 4566
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docx-to-pdf-service
+  namespace: aerolight
+spec:
+  selector:
+    app: docx-to-pdf
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30000
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aerolight-back-service
+  namespace: aerolight
+spec:
+  selector:
+    app: aerolight-back
+  ports:
+    - protocol: TCP
+      port: 9001
+      targetPort: 9001
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aerolight-front-service
+  namespace: aerolight
+spec:
+  selector:
+    app: aerolight-front
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080
+  selector:
+    app.kubernetes.io/name: argocd-server

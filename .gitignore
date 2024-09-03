@@ -1,0 +1,6 @@
+.idea/
+.env
+.token
+age.key
+tls.key
+.master.yaml
