@@ -21,9 +21,15 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_USER
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: POSTGRES_ADMIN
             - name: POSTGRES_PASSWORD
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
               value: aerolight-bdd
           volumeMounts:
