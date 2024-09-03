@@ -161,5 +161,7 @@ spec:
           image: ghcr.io/quent36987/aerolight-front:latest
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: ghcr-secret
 
 ---
