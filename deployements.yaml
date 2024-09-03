@@ -117,15 +117,27 @@ spec:
             - containerPort: 9001
           env:
             - name: PORT
-              value: "9001"
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: PORT
             - name: DB_URL
               value: jdbc:postgresql://bdd-aerolight-service:5432/aerolight-bdd
             - name: DB_USER
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: POSTGRES_ADMIN
             - name: DB_PASSWORD
-              value: admin
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: POSTGRES_PASSWORD
             - name: JWT_SECRET
-              value: "======================BezKoder=Spring==========================="
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: JWT_SECRET
             - name: JWT_EXPIRATION_MS
               value: "86400000"
             - name: JWT_COOKIE_NAME
@@ -136,6 +148,21 @@ spec:
               value: http://docx-to-pdf-service:8080
             - name: URL_FRONT
               value: http://aerolight-front-service:8085
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: ADMIN_PASSWORD
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: MAIL_PASSWORD
+            - name: ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-back
+                  key: ADMIN_USERNAME
       imagePullSecrets:
         - name: ghcr-secret
 
