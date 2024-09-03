@@ -46,8 +46,7 @@ echo -e "${GREEN}Le mot de passe initial d'Argo CD est : ${RED}$ARGOCD_PASSWORD$
 CR_TOKEN=$(cat ~/.token)
 
 # Création des namespaces back et front
-kubectl create namespace back
-kubectl create namespace front
+kubectl create namespace aerolight
 
 # Création du secret docker-registry pour l'application back
 echo -e "${GREEN}Création du secret docker-registry pour l'application back...${NC}"
@@ -56,18 +55,9 @@ kubectl create secret docker-registry ghcr-secret \
 --docker-username=quent36987 \
 --docker-password=$CR_TOKEN \
 --docker-email=quentin.goujon@epita.fr \
--n back
+-n aerolight
 echo -e "${GREEN}Secret docker-registry pour l'application back créé.${NC}"
 
-# Création du secret docker-registry pour l'application front
-echo -e "${GREEN}Création du secret docker-registry pour l'application front...${NC}"
-kubectl create secret docker-registry ghcr-secret \
---docker-server=ghcr.io \
---docker-username=quent36987 \
---docker-password=$CR_TOKEN \
---docker-email=quentin.goujon@epita.fr \
--n front
-echo -e "${GREEN}Secret docker-registry pour l'application front créé.${NC}"
 
 ## Installation de Helm et du plugin helm-secrets
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
