@@ -153,7 +153,7 @@ spec:
             - name: PDF_URL
               value: http://docx-to-pdf-service:8080
             - name: URL_FRONT
-              value: http://aerolight-front-service:8085
+              value: http://aerolight.home.quentinou.ovh
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
