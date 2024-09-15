@@ -68,6 +68,11 @@ spec:
           volumeMounts:
             - name: s3-data
               mountPath: /persisted-data
+          resources:
+            requests:
+              ephemeral-storage: "1Gi"
+            limits:
+              ephemeral-storage: "2Gi"
       volumes:
         - name: s3-data
           persistentVolumeClaim:
